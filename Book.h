@@ -3,7 +3,7 @@
 #include "std_lib_facilities.h"
 #include "Chrono.h"
 
-namespace Books {
+namespace Library {
 	enum class Genre {
 		fiction, prose, periodic, biography, children
 	};
@@ -16,12 +16,12 @@ namespace Books {
 
 		Book(string i, string t, string a, Chrono::Date rd, bool ab, Genre g); // check valid isbn and initialize
 
-		string get_isbn() const { return isbn; };
-		string get_title() const { return title; };
-		string get_author() const { return author; };
-		Chrono::Date get_reg_date() const { return reg_date; };
-		bool is_absent() const { return absent; };
-		Genre get_genre() const { return genre; };
+		string get_isbn() const;
+		string get_title() const;
+		string get_author() const;
+		Chrono::Date get_reg_date() const;
+		bool is_absent() const;
+		Genre get_genre() const;
 	private:
 		string isbn;
 		string title;

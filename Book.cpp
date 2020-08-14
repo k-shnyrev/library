@@ -1,11 +1,39 @@
 #include "Book.h"
 
-namespace Books {
+namespace Library {
 	Book::Book(string i, string t, string a, Chrono::Date rd, bool ab, Genre g)
 		:isbn{ i }, title{ t }, author{ a }, reg_date{ rd }, absent{ ab }, genre{ g }
 	{
 		if (!correct_isbn(i))
 			throw Invalid{};
+	}
+
+	string Book::get_isbn() const {
+		return isbn;
+	}
+
+	string Book::get_title() const
+	{
+		return title;
+	}
+
+	string Book::get_author() const
+	{
+		return author;
+	}
+
+	Chrono::Date Book::get_reg_date() const
+	{
+		return reg_date;
+	}
+
+	bool Book::is_absent() const
+	{
+		return absent;
+	}
+
+	Genre Book::get_genre() const {
+		return genre;
 	}
 
 	bool correct_isbn(const string& isbn) {

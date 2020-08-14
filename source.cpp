@@ -4,14 +4,15 @@ Library base
 Exercises from chapter 9 "Programming Principles and Practice Using C++" by B. Stroustrup.
 */
 
-#include "Book.h"
+#include "std_lib_facilities.h"
+#include "Library.h"
 
 int main()
 try {
 	cout << "bk1:\n";
-	Books::Book bk1 = Books::add_book();
+	Library::Book bk1 = Library::add_book();
 	cout << "bk2:\n";
-	Books::Book bk2 = Books::add_book();
+	Library::Book bk2 = Library::add_book();
 	cout << "bk1\n" << bk1 << "\nbk2\n" << bk2;
 	cout << "bk1 == bk2: " << (bk1 == bk2) << '\n';
 	return 0;
