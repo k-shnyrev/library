@@ -9,6 +9,12 @@ namespace Chrono {
         return m;
     }
 
+    Month operator--(Month& m)
+    {
+        m = (m == Month::jan) ? Month::dec : Month(int(m) - 1);
+        return m;
+    }
+
     Date::Date(int yy, Month mm, int dd)
         : y{ yy }, m{ mm }, d{ dd }
     {
@@ -42,6 +48,22 @@ namespace Chrono {
                     m = Month::jan;
                     ++y;
                 }
+            }
+        }
+        while (n < 0) {
+            if (d + n > 0) {
+                d += n;
+                n = 0;
+            }
+            else {
+                n += d;
+                if (m > Month::jan)
+                    --m;
+                else {
+                    m = Month::dec;
+                    --y;
+                }
+                d = days_in_month(m, y);
             }
         }
     }
@@ -131,18 +153,41 @@ namespace Chrono {
 
     Day day_of_week(const Date& d)
     {
-        return Day((d.day() + int(d.month()) + d.year() + d.year() / 100 % 4) % 7);
+        int day = d.day();
+        int m = int(d.month());
+        int y = d.year();
+        if (m < 3) {
+            m += 10;
+            y -= 1;
+        }
+        else
+            m -= 2;
+        int c = y / 100;
+        return Day((day + 31 * m / 12 + y + y / 4 - y / 100 + y / 400) % 7);
     }
 
-    //Date next_Sunday(const Date& d)
-    //{
-    //    // ...
-    //}
+    Date next_Sunday(const Date& d)
+    {
+        Date r = d;
+        r.add_day(7 - int(day_of_week(d)));
+        return r;
+    }
 
-    //Date next_weekday(const Date& d)
-    //{
-    //    // . . .
-    //}
+    Date next_weekday(const Date& d)
+    {
+        Date r = d;
+        switch (day_of_week(d)) {
+        case Day::friday:
+            r.add_day(3);
+            break;
+        case Day::saturday:
+            r.add_day(2);
+            break;
+        default:
+            r.add_day(1);
+        }
+        return r;
+    }
 
     int days_in_month(const Month& m, int y)
     {
@@ -157,5 +202,17 @@ namespace Chrono {
             break;
         }
         return days;
+    }
+
+    int week_of_year(const Date& d)
+    {
+        int days{ d.day() };
+        int w{ 0 };
+        if (d.month() > Month::jan)
+            for (Month i = Month::jan; i < d.month(); ++i)
+                days += days_in_month(i, d.year());
+        Date start = Date(d.year(), Month::jan, 1);
+        days -= (next_Sunday(start).day() - 7);
+        return days / 7 + 1;
     }
 }

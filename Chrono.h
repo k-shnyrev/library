@@ -9,6 +9,7 @@ namespace Chrono {
     };
 
     Month operator++(Month& m);
+    Month operator--(Month& m);
 
     enum class Day {
         sunday, monday, tuesday, wednesday, thursday, friday, saturday
@@ -51,8 +52,9 @@ namespace Chrono {
 
     istream& operator>>(istream& is, Date& dd);
 
-    int days_in_month(const Month& m, int y);
     Day day_of_week(const Date& d);
-    /*Date next_Sunday(const Date& d);
-    Date next_weekday(const Date& d);*/
+    Date next_Sunday(const Date& d);
+    Date next_weekday(const Date& d);
+    int days_in_month(const Month& m, int y);
+    int week_of_year(const Date& d);
 }

@@ -11,9 +11,9 @@ int main()
 try {
 	Chrono::Date d;
 	cin >> d;
-	cout << d << '\n' << Chrono::day_of_week(d) << '\n';
-	d.add_day(365);
 	cout << d << '\n';
+	cout << Chrono::day_of_week(d) << '\n';
+	cout << "week " << week_of_year(d) << '\n';
 	return 0;
 }
 catch (runtime_error& e) {
