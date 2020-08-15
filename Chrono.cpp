@@ -3,6 +3,12 @@
 namespace Chrono {
     // member function definitions:
 
+    Month operator++(Month& m)
+    {
+        m = (m == Month::dec) ? Month::jan : Month(int(m) + 1);
+        return m;
+    }
+
     Date::Date(int yy, Month mm, int dd)
         : y{ yy }, m{ mm }, d{ dd }
     {
@@ -22,7 +28,22 @@ namespace Chrono {
 
     void Date::add_day(int n)
     {
-        // ...
+        while (n > 0) {
+            if (d + n <= days_in_month(m, y)) {
+                d += n;
+                n = 0;
+            }
+            else {
+                n -= days_in_month(m, y) - d + 1;
+                d = 1;
+                if (m < Month::dec)
+                    ++m;
+                else {
+                    m = Month::jan;
+                    ++y;
+                }
+            }
+        }
     }
 
     void Date::add_month(int n)
@@ -47,18 +68,7 @@ namespace Chrono {
         if (d <= 0) return false;                        // d must be positive
         if (m < Month::jan || Month::dec < m) return false;
 
-        int days_in_month = 31;                  // most months have 31 days
-
-        switch (m) {
-        case Month::feb:                              // the length of February varies
-            days_in_month = (leapyear(y)) ? 29 : 28;
-            break;
-        case Month::apr: case Month::jun: case Month::sep: case Month::nov:
-            days_in_month = 30;               // the rest have 30 days
-            break;
-        }
-
-        if (days_in_month < d) return false;
+        if (days_in_month(m, y) < d) return false;
 
         return true;
     }
@@ -85,6 +95,7 @@ namespace Chrono {
     {
         return !(a == b);
     }
+
     ostream& operator<<(ostream& os, const Date& d)
     {
         return os << '(' << d.year()
@@ -120,16 +131,31 @@ namespace Chrono {
 
     Day day_of_week(const Date& d)
     {
-        // . . .
+        return Day((d.day() + int(d.month()) + d.year() + d.year() / 100 % 4) % 7);
     }
 
-    Date next_Sunday(const Date& d)
-    {
-        // ...
-    }
+    //Date next_Sunday(const Date& d)
+    //{
+    //    // ...
+    //}
 
-    Date next_weekday(const Date& d)
+    //Date next_weekday(const Date& d)
+    //{
+    //    // . . .
+    //}
+
+    int days_in_month(const Month& m, int y)
     {
-        // . . .
+        int days = 31;                  // most months have 31 days
+
+        switch (m) {
+        case Month::feb:                              // the length of February varies
+            days = (leapyear(y)) ? 29 : 28;
+            break;
+        case Month::apr: case Month::jun: case Month::sep: case Month::nov:
+            days = 30;               // the rest have 30 days
+            break;
+        }
+        return days;
     }
 }
