@@ -8,6 +8,12 @@ namespace Chrono {
         jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
     };
 
+    enum class Day {
+        sunday, monday, tuesday, wednesday, thursday, friday, saturday
+    };
+
+    const vector<string> days{ "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday" };
+
     class Date {
     public:
         class Invalid { };                               // to throw as exception
@@ -39,7 +45,11 @@ namespace Chrono {
 
     ostream& operator<<(ostream& os, const Date& d);
     ostream& operator<<(ostream& os, const Month& m);
+    ostream& operator<<(ostream& os, const Day& d);
 
     istream& operator>>(istream& is, Date& dd);
 
+    Day day_of_week(const Date& d);
+    Date next_Sunday(const Date& d);
+    Date next_weekday(const Date& d);
 }

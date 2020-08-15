@@ -31,4 +31,14 @@ namespace Library {
 	{
 		return (payment == 0);
 	}
+
+	bool operator==(const Patron& a, const Patron& b)
+	{
+		return (a.get_number() == b.get_number());
+	}
+
+	bool operator!=(const Patron& a, const Patron& b)
+	{
+		return !(a == b);
+	}
 }

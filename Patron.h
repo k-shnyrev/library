@@ -16,4 +16,7 @@ namespace Library {
 		int number;
 		double payment;
 	};
+
+	bool operator==(const Patron& a, const Patron& b);
+	bool operator!=(const Patron& a, const Patron& b);
 }

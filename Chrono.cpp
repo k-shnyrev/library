@@ -97,6 +97,11 @@ namespace Chrono {
         return os << int(m);
     }
 
+    ostream& operator<<(ostream& os, const Day& d)
+    {
+        return os << days[int(d)];
+    }
+
     istream& operator>>(istream& is, Date& dd)
     {
         int y, m, d;
@@ -113,23 +118,18 @@ namespace Chrono {
         return is;
     }
 
-    enum class Day {
-        sunday, monday, tuesday, wednesday, thursday, friday, saturday
-    };
+    Day day_of_week(const Date& d)
+    {
+        // . . .
+    }
 
-    //Day day_of_week(const Date& d)
-    //{
-    //    // . . .
-    //}
+    Date next_Sunday(const Date& d)
+    {
+        // ...
+    }
 
-    //Date next_Sunday(const Date& d)
-    //{
-    //    // ...
-    //}
-
-    //Date next_weekday(const Date& d)
-    //{
-    //    // . . .
-    //}
-
+    Date next_weekday(const Date& d)
+    {
+        // . . .
+    }
 }
