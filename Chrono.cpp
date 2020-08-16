@@ -1,3 +1,4 @@
+#include <limits>
 #include "Chrono.h"
 
 namespace Chrono {
@@ -15,71 +16,106 @@ namespace Chrono {
         return m;
     }
 
-    Date::Date(int yy, Month mm, int dd)
-        : y{ yy }, m{ mm }, d{ dd }
+    void Date::current_date(int& cd, Month& cm, int& cy) const
     {
-        if (!is_date(yy, mm, dd)) throw Invalid{};
+        int i = d;
+        cd = 1;
+        cm = Month::jan;
+        cy = 1970;
+        while (i > 0) {
+            if (i >= days_in_year(cy)) {
+                i -= days_in_year(cy);
+                ++cy;
+            }
+            else if (i >= days_in_month(cm, cy)) {
+                i -= days_in_month(cm, cy);
+                if (cm == Month::dec)
+                    ++cy;
+                ++cm;
+            }
+            else {
+                cd += i;
+                i -= i;
+            }
+        }
     }
 
-    const Date& default_date()
+    int Date::day() const
     {
-        static Date dd{ 2001,Month::jan,1 };   // start of 21st century
-        return dd;
+        int cd;
+        Month cm;
+        int cy;
+        current_date(cd, cm, cy);
+        return cd;
+    }
+
+    Month Date::month() const
+    {
+        int cd;
+        Month cm;
+        int cy;
+        current_date(cd, cm, cy);
+        return cm;
+    }
+
+    int Date::year() const
+    {
+        int cd;
+        Month cm;
+        int cy;
+        current_date(cd, cm, cy);
+        return cy;
+    }
+
+    int Date::date() const
+    {
+        return d;
+    }
+
+    Date::Date(int yy, Month mm, int dd) {
+        if (!is_date(yy, mm, dd)) throw Invalid{};
+        int r = 0;
+        int rd = 1;
+        Month rm = Month::jan;
+        int ry = 1970;
+        while (ry < yy) {
+            r += days_in_year(ry);
+            ++ry;
+        }
+        while (rm < mm) {
+            r += days_in_month(rm, ry);
+            ++rm;
+        }
+        r += dd - rd;
+        rd = dd;
+        d = r;
     }
 
     Date::Date()
-        :y{ default_date().year() }, m{ default_date().month() }, d{ default_date().day() }
+        :d{ 0 }
     {
     }
 
     void Date::add_day(int n)
     {
-        while (n > 0) {
-            if (d + n <= days_in_month(m, y)) {
-                d += n;
-                n = 0;
-            }
-            else {
-                n -= days_in_month(m, y) - d + 1;
-                d = 1;
-                if (m < Month::dec)
-                    ++m;
-                else {
-                    m = Month::jan;
-                    ++y;
-                }
-            }
-        }
-        while (n < 0) {
-            if (d + n > 0) {
-                d += n;
-                n = 0;
-            }
-            else {
-                n += d;
-                if (m > Month::jan)
-                    --m;
-                else {
-                    m = Month::dec;
-                    --y;
-                }
-                d = days_in_month(m, y);
-            }
-        }
+        d += n;
     }
 
     void Date::add_month(int n)
     {
-        // ...
+        Month cm = month();
+        int cy = year();
+        for (int i = 0; i < n; ++i) {
+            d += days_in_month(cm, cy);
+            if (cm == Month::dec)
+                ++cy;
+            ++cm;
+        }
     }
 
     void Date::add_year(int n)
     {
-        if (m == Month::feb && d == 29 && !leapyear(y + n)) {             // beware of leap years!
-            m = Month::mar;                                        // use March 1 instead of February 29
-            d = 1;
-        }
-        y += n;
+        add_month(12 * n);
     }
     // helper functions:
 
@@ -89,7 +125,7 @@ namespace Chrono {
 
         if (d <= 0) return false;                        // d must be positive
         if (m < Month::jan || Month::dec < m) return false;
-
+        if (y < 1970 || y > INT64_MAX / 366) return false;
         if (days_in_month(m, y) < d) return false;
 
         return true;
@@ -153,17 +189,7 @@ namespace Chrono {
 
     Day day_of_week(const Date& d)
     {
-        int day = d.day();
-        int m = int(d.month());
-        int y = d.year();
-        if (m < 3) {
-            m += 10;
-            y -= 1;
-        }
-        else
-            m -= 2;
-        int c = y / 100;
-        return Day((day + 31 * m / 12 + y + y / 4 - y / 100 + y / 400) % 7);
+        return Day((d.date() + 4) % 7);
     }
 
     Date next_Sunday(const Date& d)
@@ -214,5 +240,12 @@ namespace Chrono {
         Date start = Date(d.year(), Month::jan, 1);
         days -= (next_Sunday(start).day() - 7);
         return days / 7 + 1;
+    }
+
+    int days_in_year(const int& y)
+    {
+        if (leapyear(y))
+            return 366;
+        return 365;
     }
 }

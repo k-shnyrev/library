@@ -26,18 +26,18 @@ namespace Chrono {
         // the default copy operations are fine
 
         // nonmodifying operations:
-        int day() const { return d; }
-        Month month() const { return m; }
-        int year() const { return y; }
+        int day() const;
+        Month month() const;
+        int year() const;
+        void current_date(int& cd, Month& cm, int& cy) const;
+        int date() const;
 
         // modifying operations:
         void add_day(int n);
         void add_month(int n);
         void add_year(int n);
     private:
-        int y;
-        Month m;
-        int d;
+        long int d;
     };
 
     bool is_date(int y, Month m, int d);  // true for valid date
@@ -57,4 +57,5 @@ namespace Chrono {
     Date next_weekday(const Date& d);
     int days_in_month(const Month& m, int y);
     int week_of_year(const Date& d);
+    int days_in_year(const int& y);
 }
